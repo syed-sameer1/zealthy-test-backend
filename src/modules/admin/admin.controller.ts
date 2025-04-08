@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { UpdateComponentsSettingDTO } from "./dto/updateComponentsSetting.dto";
 
@@ -15,5 +15,10 @@ export class AdminController {
 
         return await this.adminService.updateComponentsSetting(data);
 
+    }
+
+    @Get('user')
+    async getUserData () {
+        return await this.adminService.getUserData();
     }
 }

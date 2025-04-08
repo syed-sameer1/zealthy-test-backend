@@ -3,12 +3,15 @@ import { UpdateComponentsSettingDTO } from "./dto/updateComponentsSetting.dto";
 import { In, Repository } from "typeorm";
 import { PageComponentsEntity } from "../database/entities/pageComponents.entity";
 import { InjectRepository } from "@nestjs/typeorm";
+import { UsersEntity } from "../database/entities/users.entity";
 
 @Injectable()
 export class AdminService {
     constructor(
         @InjectRepository(PageComponentsEntity)
-        private pageComponentRepo : Repository<PageComponentsEntity>
+        private pageComponentRepo : Repository<PageComponentsEntity>,
+        @InjectRepository(UsersEntity)
+        private userRepo: Repository<UsersEntity>
     ){}
 
     async updateComponentsSetting(data : UpdateComponentsSettingDTO) {
@@ -36,6 +39,28 @@ export class AdminService {
             await this.pageComponentRepo.save(newEntries);
 
             return {message : 'Setting updated'}
+            
+        } catch (error) {
+            throw new HttpException(error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async getUserData () {
+        try {
+
+            const user = await this.userRepo.find({
+                order: {
+                    id : 'desc'
+                }
+            });
+
+            if(user) {
+                const {password, ...safeUser} = user[0]
+
+                return safeUser
+            }
+
+            throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
             
         } catch (error) {
             throw new HttpException(error.message, error.status || HttpStatus.INTERNAL_SERVER_ERROR);
