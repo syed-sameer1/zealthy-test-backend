@@ -51,6 +51,11 @@ export class AdminService {
             const user = await this.userRepo.find({
                 order: {
                     id : 'desc'
+                },
+                relations: {
+                    userData: {
+                        component : true
+                    }
                 }
             });
 
